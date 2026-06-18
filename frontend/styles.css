@@ -1,0 +1,65 @@
+/* Typographic pacing is a first-class feature (CLAUDE.md "Reading experience"):
+   clear speaker separation, breathing room for emotional beats, chunked monologue.
+   These are starting tokens — tune during Tier 1. */
+
+:root {
+  --measure: 38rem;          /* comfortable reading column */
+  --fg: #1c1b19;
+  --muted: #6b6660;
+  --bg: #f7f4ef;             /* warm paper */
+  --accent: #b5462f;
+  --gap: 1.4rem;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.125rem/1.85 Georgia, "Times New Roman", serif;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(247, 244, 239, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid #e3ddd3;
+}
+
+.topbar h1 { margin: 0; font-size: 1.4rem; }
+.topbar .rom { color: var(--muted); font-size: 0.9rem; font-style: italic; }
+.controls { display: flex; gap: 1.25rem; align-items: center; font-size: 0.95rem; }
+
+.beat-strip {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #e3ddd3;
+}
+.beat-strip:empty { display: none; }
+
+.reader {
+  max-width: var(--measure);
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+}
+
+/* Dialogue gets clear speaker separation; narration can be demoted in dialogue mode. */
+.line-dialogue { margin: var(--gap) 0; }
+.line-narration { margin: var(--gap) 0; }
+.beat-break { margin: 2.6rem 0; text-align: center; color: var(--muted); }
+
+body.dialogue-forward .line-narration {
+  font-size: 0.92em;
+  color: var(--muted);
+}
+
+.placeholder { color: var(--muted); font-style: italic; }

@@ -1,0 +1,23 @@
+{
+  "_comment": "Per-task provider+model routing. Copy to config/bindings.json and edit. Each AI task is bound independently — rebind one task without touching others. Model names are config, not constants.",
+
+  "bindings": {
+    "context":     { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+    "rewrite":     { "provider": "anthropic", "model": "claude-sonnet-4-6" },
+    "beats":       { "provider": "google",    "model": "gemini-2.0-flash" },
+    "translation": { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+    "image":       { "provider": "openai",    "model": "gpt-image-1" }
+  },
+
+  "density_tiers": [100, 60, 40],
+
+  "image_decision": {
+    "enabled": false,
+    "visual_weight": 0.6,
+    "narrative_weight": 0.4,
+    "threshold": 0.55,
+    "max_per_chapter": 4
+  },
+
+  "process_ahead": 3
+}

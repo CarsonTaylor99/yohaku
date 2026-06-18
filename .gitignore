@@ -1,0 +1,26 @@
+# Secrets / config
+.env
+config/bindings.json
+
+# Copyrighted source material and generated output — never commit
+data/books/*
+data/cache/*
+!data/books/.gitkeep
+!data/cache/.gitkeep
+*.epub
+*.txt
+!requirements*.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

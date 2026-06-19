@@ -3,10 +3,20 @@ later means one new subclass and nothing else changes (see CLAUDE.md)."""
 from __future__ import annotations
 
 import abc
+from dataclasses import dataclass
 
 
 class ProviderCapabilityError(RuntimeError):
     """Raised when a binding asks a provider to do something it can't (e.g. image gen)."""
+
+
+@dataclass
+class GenerateResult:
+    """One LLM call's output plus the token accounting needed by the cost meter."""
+    text: str
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cached_input_tokens: int = 0
 
 
 class Provider(abc.ABC):
@@ -24,10 +34,18 @@ class Provider(abc.ABC):
         self.api_key = api_key
 
     @abc.abstractmethod
-    def generate(self, system: str, prompt: str, json_mode: bool = False) -> str:
-        """Return raw model text. When json_mode is True, request strict JSON.
+    def generate(
+        self,
+        system: str,
+        prompt: str,
+        json_mode: bool = False,
+        cached_system: str | None = None,
+    ) -> GenerateResult:
+        """One LLM call.
 
-        Callers parse defensively (strip code fences, retry/error on malformed output).
+        `system` is the always-fresh system instruction. `cached_system`, when given,
+        is a second system block (used for the carried-forward context object) that
+        providers should cache when supported — long, slowly changing content.
         """
         raise NotImplementedError
 

@@ -1,14 +1,14 @@
 /* Typographic pacing is a first-class feature (CLAUDE.md "Reading experience"):
-   clear speaker separation, breathing room for emotional beats, chunked monologue.
-   These are starting tokens — tune during Tier 1. */
+   clear speaker separation, breathing room for emotional beats, chunked monologue. */
 
 :root {
-  --measure: 38rem;          /* comfortable reading column */
+  --measure: 38rem;
   --fg: #1c1b19;
   --muted: #6b6660;
-  --bg: #f7f4ef;             /* warm paper */
+  --bg: #f7f4ef;
   --accent: #b5462f;
   --gap: 1.4rem;
+  --rule: #e3ddd3;
 }
 
 * { box-sizing: border-box; }
@@ -20,46 +20,127 @@ body {
   font: 1.125rem/1.85 Georgia, "Times New Roman", serif;
 }
 
+button, select, input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.4; cursor: default; }
+button:not(:disabled):hover { border-color: var(--accent); }
+
+select {
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
 .topbar {
   position: sticky;
   top: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
   padding: 0.75rem 1.25rem;
   background: rgba(247, 244, 239, 0.92);
   backdrop-filter: blur(6px);
-  border-bottom: 1px solid #e3ddd3;
+  border-bottom: 1px solid var(--rule);
 }
 
 .topbar h1 { margin: 0; font-size: 1.4rem; }
 .topbar .rom { color: var(--muted); font-size: 0.9rem; font-style: italic; }
-.controls { display: flex; gap: 1.25rem; align-items: center; font-size: 0.95rem; }
+
+.controls {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+}
+
+.controls label { display: inline-flex; align-items: center; gap: 0.35rem; }
+.controls .check { gap: 0.3rem; }
+.controls .muted { color: var(--muted); font-style: italic; }
+
+.picker, .nav { display: inline-flex; align-items: center; gap: 0.4rem; }
+.ch-counter { color: var(--muted); font-size: 0.9rem; min-width: 5rem; text-align: center; }
+.cost { color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+
+.status {
+  padding: 0.65rem 1.25rem;
+  background: #efe9df;
+  border-bottom: 1px solid var(--rule);
+  color: var(--fg);
+  font-size: 0.95rem;
+}
+.status.error { background: #f4dcd5; color: #8a2415; }
 
 .beat-strip {
   display: flex;
   gap: 0.75rem;
   overflow-x: auto;
   padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid #e3ddd3;
+  border-bottom: 1px solid var(--rule);
 }
 .beat-strip:empty { display: none; }
 
 .reader {
   max-width: var(--measure);
   margin: 2.5rem auto;
-  padding: 0 1.25rem;
+  padding: 0 1.25rem 6rem;
 }
 
-/* Dialogue gets clear speaker separation; narration can be demoted in dialogue mode. */
-.line-dialogue { margin: var(--gap) 0; }
-.line-narration { margin: var(--gap) 0; }
-.beat-break { margin: 2.6rem 0; text-align: center; color: var(--muted); }
+.chapter-title {
+  font-size: 1.45rem;
+  margin: 0 0 2rem;
+  text-align: center;
+  color: var(--fg);
+  letter-spacing: 0.02em;
+}
 
+/* Typographic pacing classes - emitted by the rewrite stage as `kind`. */
+.line-narration {
+  margin: var(--gap) 0;
+}
+
+.line-dialogue {
+  margin: calc(var(--gap) * 1.1) 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+}
+
+.line-beat {
+  margin: 2.6rem 0;
+  text-align: center;
+  font-size: 1.05em;
+  color: var(--fg);
+  letter-spacing: 0.01em;
+}
+
+/* Dialogue-forward mode: narration gets demoted, dialogue stays at full weight. */
 body.dialogue-forward .line-narration {
   font-size: 0.92em;
   color: var(--muted);
 }
+body.dialogue-forward .line-dialogue {
+  font-size: 1.05em;
+  border-left-color: var(--accent);
+}
 
 .placeholder { color: var(--muted); font-style: italic; }
+.placeholder code {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.92em;
+}

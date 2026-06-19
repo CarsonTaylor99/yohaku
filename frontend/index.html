@@ -8,8 +8,10 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>余白 <span class="rom">yohaku</span></h1>
+    <h1>&#20313;&#30333; <span class="rom">yohaku</span></h1>
     <div class="controls">
+      <div id="book-picker" class="picker"></div>
+      <div id="chapter-nav" class="nav"></div>
       <label>Density
         <select id="density">
           <option value="100">100%</option>
@@ -17,15 +19,18 @@
           <option value="40">40%</option>
         </select>
       </label>
-      <label><input type="checkbox" id="dialogue-mode" /> Dialogue-forward</label>
+      <label class="check"><input type="checkbox" id="dialogue-mode" /> Dialogue-forward</label>
+      <span id="cost-meter" class="cost"></span>
     </div>
   </header>
 
-  <!-- Beat strip: storyboard of stage-4 salience beats (the chapter's shape at a glance). -->
+  <div id="status" class="status" hidden></div>
+
+  <!-- Beat strip: Tier 2 storyboard. Hidden until beat detection lands. -->
   <section id="beat-strip" class="beat-strip" aria-label="Beat strip"></section>
 
   <main id="reader" class="reader">
-    <p class="placeholder">Scaffolding only — reader renders here once the pipeline lands.</p>
+    <p class="placeholder">Drop an .epub at <code>data/books/&lt;name&gt;/source.epub</code>, then pick it above.</p>
   </main>
 
   <script src="app.js"></script>

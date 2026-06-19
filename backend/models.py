@@ -42,9 +42,14 @@ class ContextObject:
 
 @dataclass
 class RewriteSpan:
-    """One span of rewritten prose mapped back to its source (trust mechanism)."""
+    """One span of rewritten prose mapped back to its source (trust mechanism).
+
+    `kind` drives typographic pacing in the reader: dialogue gets clear speaker
+    separation, narration sits at body weight, beats get breathing room.
+    """
     text: str
     source: SourceSpan
+    kind: str = "narration"  # "narration" | "dialogue" | "beat"
 
 
 @dataclass

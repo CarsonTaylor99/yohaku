@@ -40,12 +40,19 @@ class Provider(abc.ABC):
         prompt: str,
         json_mode: bool = False,
         cached_system: str | None = None,
+        json_schema: dict | None = None,
     ) -> GenerateResult:
         """One LLM call.
 
         `system` is the always-fresh system instruction. `cached_system`, when given,
         is a second system block (used for the carried-forward context object) that
         providers should cache when supported — long, slowly changing content.
+
+        `json_schema`, when given, is a JSON Schema constraining the output shape (e.g.
+        a top-level array). Providers that support constrained/structured decoding should
+        enforce it — this is what makes small local models reliably emit an array instead
+        of a single object. Providers without it can ignore the schema; the prompt already
+        describes the shape, and `json_mode` still asks for valid JSON.
         """
         raise NotImplementedError
 

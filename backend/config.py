@@ -23,6 +23,9 @@ ENV_KEYS = {
     "anthropic": "ANTHROPIC_API_KEY",
     "google": "GEMINI_API_KEY",
     "openai": "OPENAI_API_KEY",
+    # Ollama has no API key; this slot carries the server base URL instead. If unset,
+    # OllamaProvider falls back to http://localhost:11434. Not a secret.
+    "ollama": "OLLAMA_HOST",
 }
 
 

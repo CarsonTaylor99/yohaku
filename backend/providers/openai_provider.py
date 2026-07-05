@@ -19,6 +19,7 @@ class OpenAIProvider(Provider):
         prompt: str,
         json_mode: bool = False,
         cached_system: str | None = None,
+        json_schema: dict | None = None,  # ignored — GPT follows the array instruction
     ) -> GenerateResult:
         if self._client is None:
             raise RuntimeError("OPENAI_API_KEY is not set; add it to .env")

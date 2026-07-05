@@ -43,6 +43,10 @@ any other code. Do not use a single global provider switch.
 - **Anthropic / Claude**
 - **Google / Gemini**
 - **OpenAI / ChatGPT**
+- **Ollama** (local models) — *current default for all text tasks.* No API key; the key slot
+  carries the server base URL (`OLLAMA_HOST`). No prompt-caching API and no per-token cost.
+  **Must pass an explicit large `num_ctx`** (`OLLAMA_NUM_CTX`): Ollama silently truncates past
+  its small default window, which would gut the chapter-level-context design without erroring.
 Adding a new provider later = one new class implementing the interface. Nothing else changes.
 
 **Task → binding map.** Maintain a config object mapping each AI task to

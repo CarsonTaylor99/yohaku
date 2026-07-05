@@ -10,12 +10,14 @@ from ..config import Binding, Config
 from .anthropic_provider import AnthropicProvider
 from .base import Provider, ProviderCapabilityError
 from .gemini_provider import GeminiProvider
+from .ollama_provider import OllamaProvider
 from .openai_provider import OpenAIProvider
 
 _PROVIDERS: dict[str, type[Provider]] = {
     "anthropic": AnthropicProvider,
     "google": GeminiProvider,
     "openai": OpenAIProvider,
+    "ollama": OllamaProvider,
 }
 
 

@@ -42,6 +42,11 @@ def compute_usd(
     cache reads). Doesn't try to model cache-creation surcharges — slight under-count
     on first chapter, accurate enough thereafter.
     """
+    # Ollama runs locally on the user's own hardware — no per-token cost. Tokens are
+    # still tracked upstream for perf; the dollar figure is simply zero.
+    if provider == "ollama":
+        return 0.0
+
     rates = PRICING.get((provider, model), _FALLBACK)
     uncached_input = max(0, input_tokens - cached_input_tokens)
     return (

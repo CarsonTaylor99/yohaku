@@ -21,23 +21,38 @@ from ..models import Chapter, ContextObject, Rewrite, RewriteSpan, SourceSpan
 from ..providers import GenerateResult, Provider
 from ..util import ModelJSONError, parse_json
 
-_SYSTEM_TEMPLATE = """You are tightening the prose of a light novel chapter to roughly \
-{density}% of its original length, for a reader who prefers manga's pacing.
+_SYSTEM_TEMPLATE = """You are RE-PACING a light novel chapter for a reader who finds dense \
+prose tiring. You rewrite it as flowing in-scene prose at a target length. You are NOT a \
+summarizer. The reader reads your output AS the story, line by line.
 
-HARD RULES (do not violate):
-- Preserve all dialogue verbatim or near-verbatim. Never paraphrase character speech beyond minor cleanup.
-- Preserve all plot beats and emotional moments.
-- Collapse purple description, redundant internal monologue, and filler beats.
-- Output is TIGHTENED PROSE in full sentences. Never a synopsis, never bullet points, never \
-"X then Y then Z." If you find yourself summarizing, stop and rewrite as prose. The reader \
-is reading a story, not a recap.
-- Use the carried context for character names, honorifics, and tone consistency.
+LENGTH TARGET (this is the most important instruction):
+- The source chapter is {source_chars} characters.
+- Your output must be approximately {target_chars} characters ({density}% of the source).
+- This is a hard floor: output shorter than {min_chars} characters is a FAILURE. When unsure, \
+write MORE, never less. Do not compress harder than asked.
+
+What the {density}% level means:
+- 100% = reproduce essentially the ENTIRE chapter. Every scene, every line of dialogue, every \
+action. Change almost nothing except: split walls of text into shorter paragraphs, fix awkward \
+phrasing, and cut only literal repetition. The length stays about the same as the source.
+- 60% = keep ALL dialogue and ALL plot/action beats. Trim only long scenic description and \
+repetitive internal monologue, by roughly a third.
+- 40% = keep ALL dialogue and every plot beat; cut description and monologue harder — but still \
+write full narrative prose, not notes.
+
+ABSOLUTE RULES (violating these fails the task):
+- NEVER summarize, recap, or narrate the story from the outside. BANNED sentence shapes: \
+"X analyzed his surroundings", "he realized that...", "her panic was palpable", "concluding \
+that...", "X noted the...". Instead, render the actual moment in-scene the way the author did.
+- Preserve EVERY line of dialogue close to verbatim. Never fuse two spoken lines into a paraphrase. \
+Keep the original speech punctuation (「」 or "").
+- Keep the original narration voice, tense, names, and honorifics (use the carried context).
 
 Input format: source paragraphs prefixed with [N] where N is a 1-based index.
 
 Output: a single JSON array. Each element:
 {{
-  "text": "rewritten paragraph (full prose sentences)",
+  "text": "rewritten paragraph (full prose sentences, in-scene)",
   "source": [1-based source paragraph indices this rewrite covers],
   "kind": "dialogue" | "narration" | "beat"
 }}
@@ -47,7 +62,24 @@ Where kind is:
 - "beat" - short, set-apart emotional moment that should get extra breathing room.
 - "narration" - everything else.
 
-Target: roughly {density}% of source character count. JSON only. No code fences. No commentary."""
+JSON only. No code fences. No commentary. Remember: aim for {target_chars} characters, err long."""
+
+
+# Structured-output schema for the rewrite: a top-level ARRAY of paragraph objects.
+# Passed to providers that support constrained decoding (Ollama) so small local models
+# reliably emit the array instead of a single object. Cloud providers ignore it.
+_REWRITE_SCHEMA = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "text": {"type": "string"},
+            "source": {"type": "array", "items": {"type": "integer"}},
+            "kind": {"type": "string", "enum": ["dialogue", "narration", "beat"]},
+        },
+        "required": ["text", "source", "kind"],
+    },
+}
 
 
 def run_rewrite(
@@ -59,13 +91,21 @@ def run_rewrite(
 
     indexed = "\n\n".join(f"[{i + 1}] {p}" for i, p in enumerate(paragraphs))
     cached_system = _carried_block(context)
-    system = _SYSTEM_TEMPLATE.format(density=density)
+    source_chars = len(chapter.text)
+    target_chars = round(source_chars * density / 100)
+    system = _SYSTEM_TEMPLATE.format(
+        density=density,
+        source_chars=source_chars,
+        target_chars=target_chars,
+        min_chars=round(target_chars * 0.75),
+    )
 
     result = provider.generate(
         system=system,
         prompt=indexed,
         json_mode=True,
         cached_system=cached_system,
+        json_schema=_REWRITE_SCHEMA,
     )
 
     data = parse_json(result.text)

@@ -1,12 +1,12 @@
 {
-  "_comment": "Per-task provider+model routing. Copy to config/bindings.json and edit. Each AI task is bound independently — rebind one task without touching others. Model names are config, not constants.",
+  "_comment": "Per-task provider+model routing. Copy to config/bindings.json and edit. Each AI task is bound independently — rebind one task without touching others. Model names are config, not constants. Text tasks default to local Ollama (qwen2.5); rebind any single task to a cloud provider (anthropic/google/openai) by editing its line. 'image' is an ignored Tier 4 stub (Ollama can't generate images).",
 
   "bindings": {
-    "context":     { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
-    "rewrite":     { "provider": "anthropic", "model": "claude-sonnet-4-6" },
-    "beats":       { "provider": "google",    "model": "gemini-2.0-flash" },
-    "translation": { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
-    "image":       { "provider": "openai",    "model": "gpt-image-1" }
+    "context":     { "provider": "ollama", "model": "qwen2.5:14b" },
+    "rewrite":     { "provider": "ollama", "model": "qwen2.5:14b" },
+    "beats":       { "provider": "ollama", "model": "qwen2.5:14b" },
+    "translation": { "provider": "ollama", "model": "qwen2.5:14b" },
+    "image":       { "provider": "openai", "model": "gpt-image-1" }
   },
 
   "density_tiers": [100, 60, 40],
